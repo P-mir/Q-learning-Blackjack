@@ -13,5 +13,3 @@ find optimal epsilon soft policy
 
 try fixed step size learning algorithm (with alpha = 0.1) 
 try alpha =1/t
-
-jeu sans remise
