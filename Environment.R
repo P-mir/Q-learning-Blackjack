@@ -53,7 +53,8 @@ step = function(){
       reward <<- 1
     }
     else{
-      if (choose_action(state)=="D"){
+      action <<- choose_action(state)
+      if (action=="D"){
         p_hand <<- append(p_hand,draw_card(deck))
         cat("draw a card, hand is",p_hand)
         if (is_bust(p_hand)){
@@ -123,7 +124,15 @@ reset_stat = function(){
 }
 #give the index of the row corresponding to current state
 row_Qmatrix = function(){
-  state <- score(p_hand) + 20 * d_hand[1] - 21
+  if( score(p_hand) == 0){
+    
+  }
+  else if (score(p_hand) == 21){
+    
+  }
+  else{
+    state <<- score(p_hand) + 19 * d_hand[1] - 20
+  }
 return(state)
 }
 # --------GAME SIMULATION----------
@@ -154,8 +163,8 @@ game = function(n_episodes,report_every=100){
   cat(n_win/n_game,"win: ",n_win,"loss: ",n_loss,"game: ",n_game,"draw",n_draw)
 }
 
-game(100)
+game(20000)
 
-rownames(Q)[119]
+# rownames(Q)[1]
 
-
+state
