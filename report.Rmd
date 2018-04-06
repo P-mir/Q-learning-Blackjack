@@ -1,0 +1,45 @@
+---
+title: "report"
+author: "Patrick Guerin"
+date: "6 avril 2018"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, echo=FALSE}
+
+```
+
+
+
+
+# Theory
+
+
+
+## Q-learning
+
+
+***Learning rate(alpha)***
+
+alpha=0 agent don't learn anything
+alpha=1
+
+***Discount factor (gamma)***
+
+
+weight given to the future rewards
+
+
+***Exploration factor (epsilon)***
+
+
+gamma=0 future rewards not taken into account
+gamma=1
+
+typical strategies played by humans
+<!-- https://pdfs.semanticscholar.org/e1dd/06616e2d18179da7a3643cb3faab95222c8b.pdf -->
+

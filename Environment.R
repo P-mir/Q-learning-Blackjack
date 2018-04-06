@@ -43,57 +43,80 @@ score = function(hand){
 }
 
 
-step = function(){
+step = function(infos = "quiet",method = "Q"){
   end = FALSE
   while(end == FALSE){  
+  if (infos == "loud"){
   cat("cards:",p_hand,"\n")
-  
+  }
     if (sum_hand(p_hand)==21){
       end = TRUE
       reward <<- 1
     }
     else{
+      if (method == "Q"){
       action <<- choose_action(state)
+      }
+      else if (method =="R"){
+        action <<- random_action()
+      }
       if (action=="D"){
         p_hand <<- append(p_hand,draw_card(deck))
+        if (infos == "loud"){
         cat("draw a card, hand is",p_hand)
+        }
         if (is_bust(p_hand)){
           end = TRUE
           reward <<- -1
+          if (infos == "loud"){
           print("bust")
+          }
         }
         else if (sum_hand(p_hand)==21){
           end = TRUE
           reward <<- 1
+          if (infos == "loud"){
           print("blackjack")
+          }
         }
         else{
           end = FALSE
           reward <<- 0
+          if (infos == "loud"){
           print('continue')
+          }
         }
       }
     
       else{
+        if (infos == "loud"){
         print('stop')
+        }
         end = TRUE
         while (sum_hand(d_hand) < 17){
           d_hand <<- append(d_hand,draw_card(deck))
+          if (infos == "loud"){
           cat("dealer add a cart, hand is",d_hand,"\n")
+          }
         }
         if (score(p_hand)>score(d_hand)){
           reward <<- 1
+          if (infos == "loud"){
           print("win \n")
+          }
         }
         else if (score(p_hand)<score(d_hand)){
           reward <<- -1
+          if (infos == "loud"){
           print("loose \n")
+          }
         }
         else {reward <<- 0}
       }
     }
-  
+    if (infos == "loud"){
   cat(reward,score(p_hand),score(d_hand),end,"\n")
+    }
   }
 }
   
@@ -138,33 +161,37 @@ return(state)
 # --------GAME SIMULATION----------
 
 
-
-party = function(){
+# Run one game of blackjack, can print index of the states in the Q-table,before and after the game
+party = function(infos = "quiet",method = "Q"){
   reset()
   state <<- row_Qmatrix()
+  if (infos == "loud"){
   cat("old state: ",state,"\n")
-  step()
+  }
+  step(infos, method)
   state1 <<- row_Qmatrix()
+  if (infos == "loud"){
   cat("new state: ",state1,"\n")
+  }
   res <<- list(row_Qmatrix(),reward,end)
   
 }
 
 
 
-game = function(n_episodes,report_every=100){
+game = function(n_episodes,infos = "quiet",method = "Q"){
   reset_stat()
   reset_Qmatrix()
   for (i in 1:n_episodes){
-    party()
+    party(infos, method)
     count()
     Qlearning()
   }
-  cat(n_win/n_game,"win: ",n_win,"loss: ",n_loss,"game: ",n_game,"draw",n_draw)
+   cat(n_win/n_game,"win: ",n_win,"loss: ",n_loss,"game: ",n_game,"draw",n_draw,"\n payoff: ",n_win-n_loss)
 }
 
-game(20000)
+#to see what's happening use "loud": game(1000,"loud")
+# to simulate a drunk player (random): game(1000,method="R")
+game(1000000,method="Q")
 
-# rownames(Q)[1]
 
-state
