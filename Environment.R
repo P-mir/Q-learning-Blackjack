@@ -45,7 +45,12 @@ score = function(hand){
 
 step = function(infos = "quiet",method = "Q"){
   end = FALSE
+
   while(end == FALSE){  
+    state <<- row_Qmatrix()
+    if (infos == "loud"){
+      cat("old state: ",state,"\n")
+    }
   if (infos == "loud"){
   cat("cards:",p_hand,"\n")
   }
@@ -117,6 +122,11 @@ step = function(infos = "quiet",method = "Q"){
     if (infos == "loud"){
   cat(reward,score(p_hand),score(d_hand),end,"\n")
     }
+    state1 <<- row_Qmatrix()
+    if (infos == "loud"){
+      cat("new state: ",state1,"\n\n")
+    }
+  Qlearning()  
   }
 }
   
@@ -164,15 +174,7 @@ return(state)
 # Run one game of blackjack, can print index of the states in the Q-table,before and after the game
 party = function(infos = "quiet",method = "Q"){
   reset()
-  state <<- row_Qmatrix()
-  if (infos == "loud"){
-  cat("old state: ",state,"\n")
-  }
   step(infos, method)
-  state1 <<- row_Qmatrix()
-  if (infos == "loud"){
-  cat("new state: ",state1,"\n")
-  }
   res <<- list(row_Qmatrix(),reward,end)
   
 }
@@ -181,17 +183,17 @@ party = function(infos = "quiet",method = "Q"){
 
 game = function(n_episodes,infos = "quiet",method = "Q"){
   reset_stat()
-  reset_Qmatrix()
+  # reset_Qmatrix()
   for (i in 1:n_episodes){
     party(infos, method)
     count()
-    Qlearning()
+   
   }
    cat(n_win/n_game,"win: ",n_win,"loss: ",n_loss,"game: ",n_game,"draw",n_draw,"\n payoff: ",n_win-n_loss)
 }
 
 #to see what's happening use "loud": game(1000,"loud")
-# to simulate a drunk player (random): game(1000,method="R")
-game(1000000,method="Q")
+# to simulate a drunk player (Random choice): game(1000,method="R")
+game(1)
 
 
