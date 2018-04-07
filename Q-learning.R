@@ -1,8 +1,8 @@
 #Decaying epsilon-greedy Q-learning implementation
 
-alpha=0.5  #learning rate, to optimize later
-gamma=0.2  #discount 
-epsilon = 0.1   #Exploration factor, reduce it after a while
+alpha=0.1  
+gamma=1  #discount 
+epsilon = 0   #Exploration factor, reduce it after a while
 #epsilon=1/num_episode # test to decrease linearly based to num_episode
 
 

@@ -44,9 +44,7 @@ score = function(hand){
 
 
 step = function(infos = "quiet",method = "Q"){
-  end = FALSE
-
-  while(end == FALSE){  
+ 
     state <<- row_Qmatrix()
     if (infos == "loud"){
       cat("old state: ",state,"\n")
@@ -55,7 +53,7 @@ step = function(infos = "quiet",method = "Q"){
   cat("cards:",p_hand,"\n")
   }
     if (sum_hand(p_hand)==21){
-      end = TRUE
+      end <<- TRUE
       reward <<- 1
     }
     else{
@@ -71,21 +69,21 @@ step = function(infos = "quiet",method = "Q"){
         cat("draw a card, hand is",p_hand)
         }
         if (is_bust(p_hand)){
-          end = TRUE
+          end <<- TRUE
           reward <<- -1
           if (infos == "loud"){
           print("bust")
           }
         }
         else if (sum_hand(p_hand)==21){
-          end = TRUE
+          end <<- TRUE
           reward <<- 1
           if (infos == "loud"){
           print("blackjack")
           }
         }
         else{
-          end = FALSE
+          end <<- FALSE
           reward <<- 0
           if (infos == "loud"){
           print('continue')
@@ -97,7 +95,7 @@ step = function(infos = "quiet",method = "Q"){
         if (infos == "loud"){
         print('stop')
         }
-        end = TRUE
+        end <<- TRUE
         while (sum_hand(d_hand) < 17){
           d_hand <<- append(d_hand,draw_card(deck))
           if (infos == "loud"){
@@ -125,9 +123,7 @@ step = function(infos = "quiet",method = "Q"){
     state1 <<- row_Qmatrix()
     if (infos == "loud"){
       cat("new state: ",state1,"\n\n")
-    }
-  Qlearning()  
-  }
+    } 
 }
   
 #Count number of win,loss,draw and games
@@ -174,16 +170,19 @@ return(state)
 # Run one game of blackjack, can print index of the states in the Q-table,before and after the game
 party = function(infos = "quiet",method = "Q"){
   reset()
-  step(infos, method)
-  res <<- list(row_Qmatrix(),reward,end)
   
+  end <<- FALSE
+  while(end == FALSE){ 
+  step(infos, method)
+  Qlearning()
+  }
 }
 
 
 
 game = function(n_episodes,infos = "quiet",method = "Q"){
   reset_stat()
-  # reset_Qmatrix()
+  reset_Qmatrix()
   for (i in 1:n_episodes){
     party(infos, method)
     count()
@@ -194,6 +193,8 @@ game = function(n_episodes,infos = "quiet",method = "Q"){
 
 #to see what's happening use "loud": game(1000,"loud")
 # to simulate a drunk player (Random choice): game(1000,method="R")
-game(1)
+game(10000)
 
+#best: gamma 1 epsilon 0.1 alpha 0.1 10000 explore and train
 
+#note work even without exploration... bug or interesting?

@@ -1,6 +1,6 @@
 integrate usable ace
 
 
-tables of strategies,graph stats...
+tables of strategies
 
-deep Q-learning!
+deep Q-learning with Keras

@@ -18,12 +18,18 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Theory
 
-
+dynamic programming: This is
+the idea that approximate policy and value functions should interact in such a way that they both move
+toward their optimal values.
 
 ## Q-learning
 
 
+<!-- TD error based update -->
+
 ***Learning rate(alpha)***
+
+The learning rate or step size determines to what extent newly acquired information overrides old information
 
 alpha=0 agent don't learn anything
 alpha=1
@@ -38,8 +44,30 @@ weight given to the future rewards
 
 
 gamma=0 future rewards not taken into account
-gamma=1
+gamma=1 all future rewards are considered
 
-typical strategies played by humans
-<!-- https://pdfs.semanticscholar.org/e1dd/06616e2d18179da7a3643cb3faab95222c8b.pdf -->
+We set gamma to 1 since there is no interest to not take into account all futures states in the case of the blackjack game.
+
+
+
+***Deep Q-learning
+
+take action and state as input and output estimated Q-value or take state as input and output Q-value for each action
+
+
+
+
+
+biblio
+
+
+<!-- typical strategies played by humans -->
+<!-- <!-- https://pdfs.semanticscholar.org/e1dd/06616e2d18179da7a3643cb3faab95222c8b.pdf --> -->
+
+<!-- Sutton -->
+
+
+<!-- Conditions on learning rate to converge -->
+<!-- https://projecteuclid.org/download/pdf_1/euclid.aoms/1177729586 -->
+<!-- https://projecteuclid.org/download/pdf_1/euclid.aoms/1177728794 -->
 
