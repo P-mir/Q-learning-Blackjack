@@ -1,6 +1,6 @@
 # 1 = Ace, 2-10 = Number cards, Jack/Queen/King = 10
 deck = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10)
-
+end=FALSE
 
 draw_card = function(deck){
   return(sample(deck,1))
@@ -180,7 +180,7 @@ party = function(infos = "quiet",method = "Q"){
 
 
 
-game = function(n_episodes,infos = "quiet",method = "Q"){
+game = function(n_episodes,infos = "quiet",method = "Q",res = TRUE){
   reset_stat()
   reset_Qmatrix()
   for (i in 1:n_episodes){
@@ -188,8 +188,11 @@ game = function(n_episodes,infos = "quiet",method = "Q"){
     count()
    
   }
-   cat(n_win/n_game,"win: ",n_win,"loss: ",n_loss,"game: ",n_game,"draw",n_draw,"\n payoff: ",n_win-n_loss)
-}
+   if (res == TRUE){
+   cat(n_win/n_game,"win: ",n_win,"loss: ",n_loss,"game: ",n_game,"draw",n_draw,"\n payoff: ",n_win-n_loss,"\n")
+   }
+   # table(Q) #table of learned policy 
+   }
 
 #to see what's happening use "loud": game(1000,"loud")
 # to simulate a drunk player (Random choice): game(1000,method="R")

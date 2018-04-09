@@ -56,4 +56,64 @@ Qlearning = function(){
 }
 
 
+#result table, policy learned for each state
+
+table = function(Q){
+  Table = matrix(nrow = 19,ncol = 10)
+  colnames(Table) = seq(1,10)
+  rownames(Table) = seq(2,20)
+  k=0
+  for (j in 1:10){
+  for (i in 1:19){
+    Table[i,j] = colnames(Q)[which.max(Q[i+k,])]
+  }
+  k= k+19
+  }
+  return(kable(Table))
+}
+
+
+# Variance depending of the number of iteration
+var_plot= function(){
+  x=c(seq(1,99),seq(100,990,10),seq(1000,9500,500),seq(10000,12000,2000))
+  y=list()
+  k=1
+  for (i in x){
+    game(i,res = FALSE)
+    y[k]=n_win/n_game
+    k = k+1
+  }
+  plot(x,y) #gg plot
+}
+#var_plot()
+
+
+
+
+# Learning curve, percentage of win according to number of iterations
+
+average_win= function(sample = 30){
+  x=c(seq(20,99),seq(100,990,10))#seq(1000,9500,500),seq(10000,12000,2000))
+  y=list()
+  perf= c()
+  k=1
+  for (i in x){
+    for(j in 1:sample){
+    game(i,res = FALSE)
+    perf[j] = n_win/n_game
+    }
+    y[k] = mean(perf)
+    k = k+1
+    print(i)
+    }
+    plot(x,y)  #ggplot curve
+  }
+average_win()
+
+
+
+  
+
+
+
 
