@@ -1,3 +1,6 @@
+# install.packages("ggplot2")
+library(ggplot2)
+
 # 1 = Ace, 2-10 = Number cards, Jack/Queen/King = 10
 deck = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10)
 end=FALSE
@@ -196,7 +199,7 @@ game = function(n_episodes,infos = "quiet",method = "Q",res = TRUE){
 
 #to see what's happening use "loud": game(1000,"loud")
 # to simulate a drunk player (Random choice): game(1000,method="R")
-game(10000)
+game(1000)#,"loud")
 
 #best: gamma 1 epsilon 0.1 alpha 0.1 10000 explore and train
 

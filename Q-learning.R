@@ -76,25 +76,29 @@ table = function(Q){
 # Variance depending of the number of iteration
 var_plot= function(){
   x=c(seq(1,99),seq(100,990,10),seq(1000,9500,500),seq(10000,12000,2000))
-  y=list()
+  y=c()
   k=1
   for (i in x){
     game(i,res = FALSE)
     y[k]=n_win/n_game
     k = k+1
   }
-  plot(x,y) #gg plot
+  dt = data.frame(x = x, y = y)
+  ggplot(dt, aes(x , y))+
+    geom_point(color="blue")+
+    ggtitle("")
 }
-#var_plot()
+var_plot()
 
 
 
 
 # Learning curve, percentage of win according to number of iterations
+# average performance on 30 games by default
 
 average_win= function(sample = 30){
-  x=c(seq(20,99),seq(100,990,10))#seq(1000,9500,500),seq(10000,12000,2000))
-  y=list()
+  x=c(seq(20,30),seq(100,990,10),seq(1000,9500,500),seq(10000,15000,1000))
+  y=c()
   perf= c()
   k=1
   for (i in x){
@@ -106,7 +110,12 @@ average_win= function(sample = 30){
     k = k+1
     print(i)
     }
-    plot(x,y)  #ggplot curve
+    # plot(x,y)  #ggplot curve
+    dt = data.frame(x = x, y = y)
+    ggplot(dt, aes(x , y))+
+      geom_line(color="darkblue")+
+      geom_point(color="darkblue")+
+      ggtitle("Learning curve")
   }
 average_win()
 

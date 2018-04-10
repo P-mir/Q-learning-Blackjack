@@ -1,6 +1,4 @@
 integrate usable ace
 
 
-tables of strategies
-
 deep Q-learning with Keras
