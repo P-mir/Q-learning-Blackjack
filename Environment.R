@@ -1,5 +1,7 @@
 # install.packages("ggplot2")
+# install.packages("knitr")
 library(ggplot2)
+library(knitr)
 
 # 1 = Ace, 2-10 = Number cards, Jack/Queen/King = 10
 deck = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10)
@@ -66,6 +68,12 @@ step = function(infos = "quiet",method = "Q"){
       else if (method =="R"){
         action <<- random_action()
       }
+      else if (method =="C"){
+        action <<- cautious_strategy(state)
+      }
+      
+      cautious_strategy(state)
+      
       if (action=="D"){
         p_hand <<- append(p_hand,draw_card(deck))
         if (infos == "loud"){
@@ -154,7 +162,7 @@ reset_stat = function(){
   n_loss <<- 0
   n_draw <<- 0
 }
-#give the index of the row corresponding to current state
+#give the index of the Q table row corresponding to current state
 row_Qmatrix = function(){
   if( score(p_hand) == 0){
     
@@ -189,18 +197,23 @@ game = function(n_episodes,infos = "quiet",method = "Q",res = TRUE){
   for (i in 1:n_episodes){
     party(infos, method)
     count()
-   
   }
+  
    if (res == TRUE){
    cat(n_win/n_game,"win: ",n_win,"loss: ",n_loss,"game: ",n_game,"draw",n_draw,"\n payoff: ",n_win-n_loss,"\n")
    }
-   # table(Q) #table of learned policy 
-   }
+  if(method =="Q"){
+   table(Q) #table of learned policy
+  }
+  else if(method =="C"){
+    table_C()
+  }
+}
 
-#to see what's happening use "loud": game(1000,"loud")
+#to see what's happening use "loud":          game(1000,"loud")
 # to simulate a drunk player (Random choice): game(1000,method="R")
-game(1000)#,"loud")
+# To benchmark with a carefull strategy:      game(10000,method="C")
+game(10000,method="C")
 
-#best: gamma 1 epsilon 0.1 alpha 0.1 10000 explore and train
 
 #note work even without exploration... bug or interesting?

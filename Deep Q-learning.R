@@ -1,8 +1,8 @@
 #deep Q-learning, approximating Q-table with ANN
+#https://leonardoaraujosantos.gitbooks.io/artificial-inteligence/content/deep_q_learning.html
 
 
-
-# install.packages("keras")
+ # install.packages("keras")
 library(keras)
 # install_keras()
 
@@ -26,14 +26,14 @@ model %>%
     optimizer = optimizer_rmsprop(),
   )
 
-# # Use the fit() function to train the model for 30 epochs using batches of 100 what:
-#     
-# history <- model %>% fit(
-#   state, reward, 
-#   epochs = 30, batch_size = 100, 
-#   validation_split = 0.2,
-    #verbose = 0
-#   )
+# # Use the fit() function to train the model (update weights) for 30 epochs using batches of 100 
+     
+history <- model %>% fit(
+  state, reward,
+  epochs = 30, batch_size = 100,
+  validation_split = 0.2,
+verbose = 0
+  )
 #     
 # # The history object returned by fit() includes loss and accuracy metrics which we can plot:
 # plot(history)
@@ -62,9 +62,19 @@ model %>%
   
 deep_Qlearning = function(){
   
-}
+  # model.fit(state, reward_value, epochs=1, verbose=0)
+  #???code like that to train online
   
+      #prediction = model.predict(state)"
+  
+}
+
+#1- learn how to use keras
+#2- learn how to use keras with online learning
 
 # input are states
 #predict reward AKA predict Q-table
-#at each step the error is (predicted reward-actual reward)^2
+#at each step the error is (predicted reward-actual_reward)^2
+#Minimize the error
+
+# idea epsilon g with nn: most of the time follow the prediction (classification or regression?) predict a value of a maimum class
