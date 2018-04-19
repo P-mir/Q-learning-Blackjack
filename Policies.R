@@ -4,7 +4,7 @@ alpha=0.1
 gamma=1  #discount 
 epsilon = 0   #Exploration factor, reduce it after a while
 #epsilon=1/num_episode # test to decrease linearly based to num_episode
-
+reset_Qmatrix()
 
 player_states= seq(2,20)
 dealer_states = seq(1,10)
@@ -32,7 +32,45 @@ rownames(Q) <<- S
 # random strategy, benchmark
 random_action = function(){
   return(sample(A,1))
+}
+
+#draw until sum of card is 11 then stop
+
+draw = c()
+for (i in seq(1,172,19)){
+  
+  draw=c(draw,seq(i,i+9))
+}
+cautious_strategy= function(state){
+
+  if (state %in% draw){
+    return("D")
+    }
+  else{
+    return("S")
   }
+}
+
+table_C = function(){
+  Table = matrix(nrow = 19,ncol = 10)
+  colnames(Table) = seq(1,10)
+  rownames(Table) = seq(2,20)
+  for (i in 1:10){
+    for (j in 1:10){
+      Table[i,j] = "D"
+    }
+  }
+  for (i in 11:19){
+    for (j in 1:10){
+      Table[i,j] = "S"
+    }
+  }
+  return(kable(Table))
+}
+
+
+
+
 
 # epsilon-greedy strategy of the Q-learning method
 choose_action = function(state){
@@ -74,21 +112,21 @@ table = function(Q){
 
 
 # Variance depending of the number of iteration
-var_plot= function(){
-  x=c(seq(1,99),seq(100,990,10),seq(1000,9500,500),seq(10000,12000,2000))
-  y=c()
-  k=1
-  for (i in x){
-    game(i,res = FALSE)
-    y[k]=n_win/n_game
-    k = k+1
-  }
-  dt = data.frame(x = x, y = y)
-  ggplot(dt, aes(x , y))+
-    geom_point(color="blue")+
-    ggtitle("")
-}
-var_plot()
+# var_plot= function(){
+#   x=c(seq(1,99),seq(100,990,10),seq(1000,9500,500),seq(10000,12000,2000))
+#   y=c()
+#   k=1
+#   for (i in x){
+#     game(i,res = FALSE)
+#     y[k]=n_win/n_game
+#     k = k+1
+#   }
+#   dt = data.frame(x = x, y = y)
+#   ggplot(dt, aes(x , y))+
+#     geom_point(color="blue")+
+#     ggtitle("")
+# }
+# var_plot()
 
 
 
@@ -97,7 +135,7 @@ var_plot()
 # average performance on 30 games by default
 
 average_win= function(sample = 30){
-  x=c(seq(20,30),seq(100,990,10),seq(1000,9500,500),seq(10000,15000,1000))
+  x=c(seq(20,30),seq(100,990,10))#,seq(1000,9500,500),seq(10000,15000,1000))
   y=c()
   perf= c()
   k=1
@@ -117,11 +155,11 @@ average_win= function(sample = 30){
       geom_point(color="darkblue")+
       ggtitle("Learning curve")
   }
-average_win()
+# average_win()
 
 
 
-  
+
 
 
 
