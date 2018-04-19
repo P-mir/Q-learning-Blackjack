@@ -3,97 +3,50 @@ title: "report"
 author: "Patrick Guerin"
 date: "6 avril 2018"
 output: pdf_document
-geometry: top=2cm,bottom=2cm
-
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-
-path="C:/Users/p/Documents/GitHub/Q-learning-Blackjack/images"
- # setwd("C:/Users/p/Documents/GitHub/Q-learning-Blackjack/images")
-
-
 ```
-\graphicspath{ {path/} }
 
 ```{r, echo=FALSE}
 
 ```
-
-#Introduction
 
 
 
 
 # Theory
 
+dynamic programming: This is
+the idea that approximate policy and value functions should interact in such a way that they both move
+toward their optimal values.
+
+## Q-learning
 
 
-The game of blackjack can be seen as a Markov decision process, for which each action only depends of the previous one. In order to find an optimal policy, We use the **Q-learning** method. Q-learning can be classified as an off-policy Temporal Difference algorithm.
+<!-- TD error based update -->
 
-TD learning is a combination of Monte Carlo ideas and dynamic programming (DP) ideas. Like Monte Carlo methods, TD methods can learn directly from raw experience without a model of the environment. Like DP, TD methods update estimates based in part on other learned estimates, without waiting for a final outcome,contrary with Monte Carlo method which only update at the end of the epochs.
-
-##Methodology
-
-Firstly, we define the Q-table, which links each pair of action-state to its (approximated) expected value . On the basis of this the agent will choose the action with the highest expected value given the current state.
-
-The Q-table is first initialized at zero for all action-states, and we use Temporal Difference error based updates to fill it.
-
-The update is made according to the following formula:
-
-$Q(s_{t},a_{t}) \leftarrow   \underbrace{Q(s_{t},a_{t})}_{\rm old~value} + \underbrace{\alpha}_{\rm learning~rate} \cdot  \overbrace{\bigg( \underbrace{r_{t}}_{\rm reward} + \underbrace{\gamma}_{\rm discount~factor} \cdot \Big[\underbrace{Q(s_{t},a_{t})}_{\rm old~value}- \underbrace{\max_{a}Q(s_{t+1}, a)\Big]}_{\rm estimate~of~optimal~future~value} \bigg) }^{\rm learned~value}$
-
-
-
-***Learning rate($\alpha$)***
+***Learning rate(alpha)***
 
 The learning rate or step size determines to what extent newly acquired information overrides old information
 
-Various condition have been defined in the literature to ensure a convergence[-@convergence], in practice, a learning rate of 0.1 is often used, this is what we use.
+alpha=0 agent don't learn anything
+alpha=1
 
-***Discount factor ($\gamma$)***
-
-
-It is the weight given to the future rewards,we set $\gamma$ to 1 since there is no interest to not take into account all futures states in the case of the blackjack game. Hence we set $\gamma=1$ (which gave us the best results).
+***Discount factor (gamma)***
 
 
-***Exploration factor ($\epsilon$)***
-
-The Exploration factor is part of $\epsilon$-greedy strategy generally used to garantee that the agent explore all the state space a convenient number of times. The $\epsilon$-greedy strategy did not improve the performance of the agent, and we decided to set $\epsilon=0$. This surprising result can be explained by taking into account that $\gamma=1$ imply that the estimated value of each action-state is greatly dependant of the next action-states values. In other words even if our agent did not explore all the state space, the values of each action-state were correctly estimated thanks to the next action-states
-
-not convincing.. bug? see next state after terminal state why draw has not negative values in 20
-
-#Simulation
+weight given to the future rewards
 
 
-## Benchmark
-
-In order to assess the performance of our agent, we simulated a random strategy and a cautious strategy as benchmarks.
-
-In the cautious strategy, the agent choose to draw a cards until he reaches 11, then stop the drawing.
-
-\begin{figure}[h]
-\includegraphics{table_C.png}
-\centering
-\end{figure}
+***Exploration factor (epsilon)***
 
 
-...
+gamma=0 future rewards not taken into account
+gamma=1 all future rewards are considered
 
-
-
-## Statistics
-
-
-
-
-
-
-
-
-
-
+We set gamma to 1 since there is no interest to not take into account all futures states in the case of the blackjack game.
 
 
 
@@ -105,14 +58,16 @@ take action and state as input and output estimated Q-value or take state as inp
 
 
 
-\section{References}
+biblio
 
-nocite: | 
-  @Sutton
 
-@convergence
-@Sutton
 <!-- typical strategies played by humans -->
 <!-- <!-- https://pdfs.semanticscholar.org/e1dd/06616e2d18179da7a3643cb3faab95222c8b.pdf --> -->
 
+<!-- Sutton -->
+
+
+<!-- Conditions on learning rate to converge -->
+<!-- https://projecteuclid.org/download/pdf_1/euclid.aoms/1177729586 -->
+<!-- https://projecteuclid.org/download/pdf_1/euclid.aoms/1177728794 -->
 
