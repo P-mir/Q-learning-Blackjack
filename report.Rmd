@@ -24,7 +24,9 @@ path="C:/Users/p/Documents/GitHub/Q-learning-Blackjack/images"
 #Introduction
 
 
+Gmae description
 
+one deck of 52 card
 
 # Theory
 
@@ -91,7 +93,22 @@ In the cautious strategy, the agent choose to draw a cards until he reaches 11, 
 
 
 
+#??? Compter les cartes
 
+Issues encountered
+
+
+*the exponential number of states*
+
+Ideally our player should know not only the score of the hands but also the actual cards drawn.
+
+one deck:54 cards
+approximate number of states: $54^{9}$
+
+*Hi-Lo Strategy*
+
+
+do table with different dimensions and content
 
 
 
@@ -100,6 +117,25 @@ In the cautious strategy, the agent choose to draw a cards until he reaches 11, 
 ***Deep Q-learning
 
 take action and state as input and output estimated Q-value or take state as input and output Q-value for each action
+
+Conlclusion
+
+e Universal Approximation Theorem shows that neural nets should be able to eventually
+adequately represent any Q function we want with a sufficiently large network, we
+8
+would like to make our larger to see if that could improve any of the issues we are seeing,
+especially with our DQN.
+
+ tuning the learning rate hyper-parameter of the optimization algorithm
+for both methods, but we would like to do more work and a proper linear search over
+the space for ?? and look into some more interesting annealing strategies.
+
+
+
+Most cardcounting
+strategies provide recommendations about when to up the bet and when to lower it.
+In fact, the majority of the card-counting EV comes from this large (up to 100x) modulation
+in bet size.
 
 
 

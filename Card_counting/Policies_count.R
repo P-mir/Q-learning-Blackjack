@@ -8,28 +8,29 @@ library(knitr)
 alpha=0.1  
 gamma=1  #discount 
 
-player_states= seq(2,20)
-dealer_states = seq(1,10)
+
+#  approximately 49 counts that need to be accounted for
+tot_count=49
+cnt=seq(-24,24)
+player_score = seq(2,20)
+dealer_score = seq(1,10)
 
 
-
-#generate all possible state (state space is 190)
-grid=expand.grid(player_states,dealer_states)
-S=paste(grid[,1],grid[,2],sep="-")
+#generate all possible state 
+grid=expand.grid(cnt,player_score,dealer_score)
+S=paste(grid[,1],grid[,2],grid[,3],sep="-")   #construct rownames of Q table
 # Set of actions, draw another cards or stick with the cards
 A=c("D","S")
 
 # reinitialize the Action-State matrix
 reset_Qmatrix = function(){
-Q <<- matrix(0,nrow=190,ncol=2)
+Q <<- matrix(0,nrow=nrow(grid),ncol=2)
 colnames(Q) <<- A
 rownames(Q) <<- S
 }
 
-#epsilon-greedy strategy
-#return the action that maximize the action-value function for a given state
-#if both actions output the same value the agent choose randomly
-# in epsilon% of the cases the agent choose randomly anyway (exploration)
+
+reset_Qmatrix()
 
 # random strategy, benchmark
 random_action = function(){
@@ -76,8 +77,14 @@ table_C = function(){
 
 
 # epsilon-greedy strategy of the Q-learning method
+
+#return the action that maximize the action-value function for a given state
+#if both actions output the same value the agent choose randomly
+# in epsilon% of the cases the agent choose randomly anyway (exploration)
+
+
 choose_action = function(state){
-  epsilon = 1/n_episodes   #Exploration factor, reduce it after a while
+  epsilon = 1/n_episodes   #Exploration factor
   if (runif(1)<epsilon){
     return(sample(A,1))
   }
@@ -97,6 +104,7 @@ Qlearning = function(){
   Q[state,action] <<- Q[state,action] + alpha*(reward+gamma*max(Q[state1,])-Q[state,action])
 }
 
+
 #give the index of the Q table row corresponding to current state
 row_Qmatrix = function(){
   if( score(p_hand) == 0){
@@ -106,27 +114,11 @@ row_Qmatrix = function(){
     
   }
   else{
-    state <<- score(p_hand) + 19 * d_hand[1] - 20
+
+    state <<- (counter+25)+tot_count*(score(p_hand)-1)-tot_count + 19*tot_count * d_hand[1] - 19*tot_count
   }
   return(state)
 }
-
-#result table, policy learned for each state
-
-table = function(Q){
-  Table = matrix(nrow = 19,ncol = 10)
-  colnames(Table) = seq(1,10)
-  rownames(Table) = seq(2,20)
-  k=0
-  for (j in 1:10){
-  for (i in 1:19){
-    Table[i,j] = colnames(Q)[which.max(Q[i+k,])]
-  }
-  k= k+19
-  }
-  return(kable(Table))
-}
-
 
 # Variance depending of the number of iteration
 # var_plot= function(){

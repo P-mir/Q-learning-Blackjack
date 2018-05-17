@@ -1,18 +1,58 @@
 source("Policies.r")
 
+d=1 #number of deck
+
 # 1 = Ace, 2-10 = Number cards, Jack/Queen/King = 10
-deck = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10)
+end = TRUE
 
-end = FALSE
+#prendre une carte et la remetre a la fin ok 
+#mélanger tous les x game ok
+# counter at each moment the player discover a new card
 
-#draw a card card from the top of the deck
-draw_card = function(deck){
-  return(sample(deck,1))
+counter=0
+Count = function(infos="quiet"){
+  
+  for (i in 1:length(p_hand)){  
+    if(p_hand[i] %in% c(10)){
+      counter<<-counter-1
+  
+      if (infos == "loud"){
+        cat("modify phand bcose of initial -1 \n")
+      }
+    }
+    
+    if(p_hand[i] %in% c(1,2,3,4)){
+      counter<<-counter+1
+      if (infos == "loud"){
+        cat("update counter (player hand) +1 \n")
+      }
+    }
+  }
+    
+    if(d_hand[1] %in% c(10)){counter<<-counter-1
+  cat("modify dhand bcose of initial -1 \n")
+    }
+    if(d_hand[1] %in% c(1,2,3,4)){counter<<-counter+1
+    cat("modify dhand bcose of initial +1","\n")
+    }
+}
+
+#draw a card card from the top of the deck and put it at the end of the deck
+draw_card = function(){
+  card<<-deck[1]
+  deck<<-deck[-1]
+  deck<<-append(deck,card)
+  return(card)
 }
 
 
+
+shuffle= function(deck){
+  return(sample(deck))
+}
+
 draw_hand = function(){
-  return(c(draw_card(deck),draw_card(deck)))
+  return(c(draw_card(),draw_card()))
   }
 
 
@@ -40,18 +80,30 @@ score = function(hand){
   }
 }
 
+if(d_hand[1] %in% c(10)){counter<<-counter-1
+cat("modify dhand bcose of initial -1 \n")
+}
+if(d_hand[1] %in% c(1,2,3,4)){counter<<-counter+1
+cat("modify dhand bcose of initial +1","\n")
+}
 
 step = function(infos = "quiet",method = "Q"){
     
-    
     state <<- row_Qmatrix()
+
     if (infos == "loud"){
       cat("old state: ",state,"\n")
     }
   if (infos == "loud"){
-  cat("cards:",p_hand,"\n")
+  cat("player cards:",p_hand,"\n")
+  cat("dealer cards:",d_hand[1],"\n")
+  cat("counter: ",counter,"\n")  
   }
-    
+    if (sum_hand(p_hand)==21){
+      end <<- TRUE
+      reward <<- 1
+    }
+    else{
       if (method == "Q"){
       action <<- choose_action(state)
       }
@@ -65,10 +117,29 @@ step = function(infos = "quiet",method = "Q"){
       cautious_strategy(state)
       
       if (action=="D"){
-        p_hand <<- append(p_hand,draw_card(deck))
+        p_hand <<- append(p_hand,draw_card())
+        
         if (infos == "loud"){
-        cat("draw a card, hand is",p_hand)
+        cat("draw a card, hand is",p_hand,"\n")
         }
+        
+        #update the counter each time the player draw a card
+        if(p_hand[length(p_hand)] %in% c(10)){
+          counter<<-counter-1
+          
+          if (infos == "loud"){
+            cat("modify phand bcose of draw,-1 \n counter: ",counter)
+          }
+        }
+        
+        if(p_hand[length(p_hand)] %in% c(1,2,3,4)){
+          counter<<-counter+1
+          
+          if (infos == "loud"){
+            cat("modify phand bcose of draw,+1 \n counter: ",counter)
+          }}
+        
+        
         if (is_bust(p_hand)){
           end <<- TRUE
           reward <<- -1
@@ -98,9 +169,25 @@ step = function(infos = "quiet",method = "Q"){
         }
         end <<- TRUE
         while (sum_hand(d_hand) < 17){
-          d_hand <<- append(d_hand,draw_card(deck))
+          d_hand <<- append(d_hand,draw_card())
+          
+          
           if (infos == "loud"){
           cat("dealer add a cart, hand is",d_hand,"\n")
+          }
+          
+          #update counter each time the dealer draw a card
+          if(d_hand[length(d_hand)] %in% c(10)){
+            counter<<-counter-1
+            if (infos == "loud"){
+              cat("modify dhand bcose of draw,-1 \n counter: ",counter)
+            }
+          }
+          if(d_hand[length(d_hand)] %in% c(1,2,3,4)){
+            counter<<-counter+1
+            if (infos == "loud"){
+              cat("modify dhand bcose of draw,+1 \n counter: ",counter)
+            }
           }
         }
         if (score(p_hand)>score(d_hand)){
@@ -117,8 +204,7 @@ step = function(infos = "quiet",method = "Q"){
         }
         else {reward <<- 0}
       }
-      
-    
+    }
     if (infos == "loud"){
   cat(reward,score(p_hand),score(d_hand),end,"\n")
     }
@@ -162,6 +248,7 @@ party = function(infos = "quiet",method = "Q"){
   
   if (infos=="loud"){cat("New party","\n")}
   reset()
+  Count() #update counter after hand have been distributed
   end <<- FALSE
   while(end == FALSE){ 
   step(infos, method)
@@ -172,11 +259,20 @@ party = function(infos = "quiet",method = "Q"){
 
  
 # Simulate x number of game and output the result of the chosen strategy
-game = function(n_episodes,infos = "quiet",method = "Q",res = TRUE){
+game = function(n_episodes,infos = "quiet",method = "Q",shuffle_every=0,d=1,res = TRUE){
   reset_stat()
   reset_Qmatrix()
+  counter<<-0
+  deck <<- c(rep(c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10),4*d))
+  deck <<- shuffle(deck)
+  # if (shuffle_every==0){shuffle_every=1e+20}
   n_episodes<<-n_episodes
   for (i in 1:n_episodes){
+    #shuffle the deck and reset  the counter
+    # if ((n_episodes %% shuffle_every)==0){
+    #   shuffle_deck(deck)
+    #   counter<<-0
+    #   }
     party(infos, method)
     count()
   }
@@ -184,9 +280,6 @@ game = function(n_episodes,infos = "quiet",method = "Q",res = TRUE){
    if (res == TRUE){
    cat(n_win/n_game,"win: ",n_win,"loss: ",n_loss,"game: ",n_game,"draw",n_draw,"\n payoff: ",n_win-n_loss,"\n")
    }
-  if(method =="Q"){
-   return(table(Q)) #table of learned policy
-  }
   else if(method =="C"){
     return(table_C())
   }
@@ -195,7 +288,7 @@ game = function(n_episodes,infos = "quiet",method = "Q",res = TRUE){
 #to see what's happening use "loud":          game(1000,"loud")
 # to simulate a drunk player (Random choice): game(1000,method="R")
 # To benchmark with a careful strategy:      game(10000,method="C")
-game(n_episodes=100000,infos = "quiet",method="Q",res=TRUE)
-
-
+#shuffle_every=3  shuffle the deck every 3 game
+#To never shuffle the deck put shuffle_every=0 (default)
+game(n_episodes=1000,infos = "loud",method="Q",shuffle_every=100,d=1,res=TRUE)
 

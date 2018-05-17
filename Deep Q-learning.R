@@ -67,4 +67,23 @@ deep_Qlearning = function(){
 
 # input are states
 #predict reward AKA predict Q-table
-#at each step the error is (predicted reward-actual reward)^2
+#at each step the error is (predicted reward-actual reward)^2+
+# 
+
+
+
+
+
+
+# 
+# library(foreach)
+# library(doParallel)
+# no_cores <- detectCores()
+# cl=makeCluster(no_cores)
+# clusterExport(cl, c("party", "draw_card", "draw_hand", "Qlearning","reset","reset_Qmatrix","random_action","cautious_strategy",
+#                     "choose_action","table","table_C",'deck',"end","grid","S","A","draw"))
+# registerDoParallel(cl)
+# 
+# foreach(i=1:n_episodes,.export = c("party", "draw_card", "draw_hand", "Qlearning","reset","reset_Qmatrix","random_action","cautious_strategy",
+#                                    "choose_action","table","table_C",'deck',"end","grid","S","A","draw")) %dopar% {
+#                                      
