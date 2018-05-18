@@ -11,27 +11,37 @@ gamma=1  #discount
 
 #  approximately 13 counts that need to be accounted for
 
-cnt=seq(-6,6)
+
+
+
+# reinitialize the Action-State matrix
+reset_Qmatrix = function(decks){
+  
+  if (decks==1){limit=6}
+  if (decks==2){limit=10}
+  if (decks==3){limit=13}
+  if (decks==4 || decks==5){limit=15}
+  if (decks==6){limit=17}
+  if (decks==7){limit=19}
+  if (decks==8){limit=20}
+  if (decks==9){limit=21}
+  if (decks==10){limit=22}
+  
+cnt=seq(-limit,limit)
 player_score = seq(2,20)
 dealer_score = seq(1,10)
-
-tot_count=length(cnt)
-
+  
+tot_count<<-length(cnt)
+  
 #generate all possible state 
-grid=expand.grid(cnt,player_score,dealer_score)
+grid<<-expand.grid(cnt,player_score,dealer_score)
 S=paste(grid[,1],grid[,2],grid[,3],sep="-")   #construct rownames of Q table
 # Set of actions, draw another cards or stick with the cards
 A=c("D","S")
-
-# reinitialize the Action-State matrix
-reset_Qmatrix = function(){
 Q <<- matrix(0,nrow=nrow(grid),ncol=2)
 colnames(Q) <<- A
 rownames(Q) <<- S
 }
-
-
-reset_Qmatrix()
 
 # random strategy, benchmark
 random_action = function(){
@@ -116,7 +126,7 @@ row_Qmatrix = function(){
   }
   else{
 
-    state <<- counter-abs(counter+1)+tot_count*(score(p_hand)-1)-tot_count + 19*tot_count * d_hand[1] - 19*tot_count
+    state <<- counter+abs(counter+1)+tot_count*(score(p_hand)-1)-tot_count + 19*tot_count * d_hand[1] - 19*tot_count
   }
   return(state)
 }

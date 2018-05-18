@@ -1,6 +1,5 @@
 source("Policies_count.r")
 
-d=1 #number of deck
 
 # 1 = Ace, 2-10 = Number cards, Jack/Queen/King = 10
 end = TRUE
@@ -73,7 +72,6 @@ shuffle= function(deck){
 draw_hand = function(){
   return(c(draw_card(),draw_card()))
   }
-
 
 # total of the hand  ,   add condition for usable ace
 sum_hand = function(hand){
@@ -307,26 +305,27 @@ party = function(infos = "quiet",method = "Q"){
 
  
 # Simulate x number of game and output the result of the chosen strategy
-game = function(n_episodes,infos = "quiet",method = "Q",shuffle_every=0,d=1,res = TRUE){
+game = function(n_episodes,infos = "quiet",method = "Q",shuffle_every=0,decks=1,res = TRUE){
   reset_stat()
-  reset_Qmatrix()
+  reset_Qmatrix(decks)
   counter<<-0
-  deck <<- c(rep(c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10),4*d))
+  deck <<- c(rep(c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10),4*decks))
   deck <<- shuffle(deck)
   # if (shuffle_every==0){shuffle_every=1e+20}
   n_episodes<<-n_episodes
   for (i in 1:n_episodes){
     #shuffle the deck and reset  the counter
     # if ((n_episodes %% shuffle_every)==0){
-    #   shuffle_deck(deck)
-    #   counter<<-0
+    #   shuffle(deck)
+    #   counter<<-
+    #   if (infos=="loud"){cat(shuffle_every,"parties passed,shuffle the deck")}
     #   }
     party(infos, method)
     count()
   }
   
    if (res == TRUE){
-   cat(n_win/n_game,"win: ",n_win,"loss: ",n_loss,"game: ",n_game,"draw",n_draw,"\n payoff: ",n_win-n_loss,"\n")
+   cat(round(n_win/n_game,2),"win: ",n_win,"loss: ",n_loss,"game: ",n_game,"draw",n_draw,"\n payoff: ",n_win-n_loss,"\n")
    }
   else if(method =="C"){
     return(table_C())
@@ -338,5 +337,6 @@ game = function(n_episodes,infos = "quiet",method = "Q",shuffle_every=0,d=1,res 
 # To benchmark with a careful strategy:      game(10000,method="C")
 #shuffle_every=3  shuffle the deck every 3 game
 #To never shuffle the deck put shuffle_every=0 (default)
-game(n_episodes=1000000,infos = "quiet",method="Q",shuffle_every=100,d=1,res=TRUE)
+#deck=3: include 3 decks in the game (max 10 decks)
+game(n_episodes=1000,infos = "",method="Q",shuffle_every=100,decks=10,res=TRUE)
 
