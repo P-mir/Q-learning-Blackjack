@@ -9,12 +9,13 @@ alpha=0.1
 gamma=1  #discount 
 
 
-#  approximately 49 counts that need to be accounted for
-tot_count=49
-cnt=seq(-24,24)
+#  approximately 13 counts that need to be accounted for
+
+cnt=seq(-6,6)
 player_score = seq(2,20)
 dealer_score = seq(1,10)
 
+tot_count=length(cnt)
 
 #generate all possible state 
 grid=expand.grid(cnt,player_score,dealer_score)
@@ -115,7 +116,7 @@ row_Qmatrix = function(){
   }
   else{
 
-    state <<- (counter+25)+tot_count*(score(p_hand)-1)-tot_count + 19*tot_count * d_hand[1] - 19*tot_count
+    state <<- counter-abs(counter+1)+tot_count*(score(p_hand)-1)-tot_count + 19*tot_count * d_hand[1] - 19*tot_count
   }
   return(state)
 }
