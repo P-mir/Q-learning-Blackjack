@@ -15,7 +15,7 @@ Count = function(infos="quiet"){
       counter<<-counter-1
       
       if (infos == "loud"){
-        cat("modify phand bcose of initial -1 \n")
+        cat("update counter: -1 \n")
       }
     }
     
@@ -175,7 +175,7 @@ step = function(infos = "quiet",method = "Q"){
           }
             
             if(d_hand[2] %in% c(1,2,3,4)){counter<<-counter+1
-              if (infos=="loud"){cat("update counter; modify dhand bcose second card of dealer:",d_hand[2],"+1 \n")
+              if (infos=="loud"){cat("update counter; take into acocunt the second card of dealer:",d_hand[2],"+1 \n")
               }
             }
             
@@ -211,13 +211,13 @@ step = function(infos = "quiet",method = "Q"){
           if(d_hand[length(d_hand)] %in% c(10)){
             counter<<-counter-1
             if (infos == "loud"){
-              cat("modify dhand bcose of draw,-1 \n counter: ",counter,"\n")
+              cat("update counter: -1 \n counter: ",counter,"\n")
             }
           }
           if(d_hand[length(d_hand)] %in% c(1,2,3,4)){
             counter<<-counter+1
             if (infos == "loud"){
-              cat("modify dhand bcose of draw,+1 \n counter: ",counter,"\n")
+              cat("update counter: +1 \n counter: ",counter,"\n")
             }
           }
         }
@@ -238,10 +238,10 @@ step = function(infos = "quiet",method = "Q"){
         else {reward <<- 0}
       
         if(d_hand[2] %in% c(1,2,3,4)){counter<<-counter+1
-          if (infos=="loud"){cat("modify dhand bcose second card of dealer:",d_hand[2],"+1 \n")}
+          if (infos=="loud"){cat("update counter; take into account the second card of dealer:",d_hand[2],"+1 \n")}
         }
         if(d_hand[2] %in% c(10)){counter<<-counter-1
-          if (infos=="loud"){cat("modify dhand bcose second card of dealer:",d_hand[2],"-1 \n")}
+          if (infos=="loud"){cat("update counter; take into account the second card of dealer:",d_hand[2],"-1 \n")}
         }
         
         }
@@ -311,15 +311,15 @@ game = function(n_episodes,infos = "quiet",method = "Q",shuffle_every=0,decks=1,
   counter<<-0
   deck <<- c(rep(c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10),4*decks))
   deck <<- shuffle(deck)
-  # if (shuffle_every==0){shuffle_every=1e+20}
+  if (shuffle_every==0){shuffle_every=1e+20}
   n_episodes<<-n_episodes
   for (i in 1:n_episodes){
     #shuffle the deck and reset  the counter
-    # if ((n_episodes %% shuffle_every)==0){
-    #   shuffle(deck)
-    #   counter<<-
-    #   if (infos=="loud"){cat(shuffle_every,"parties passed,shuffle the deck")}
-    #   }
+    if ((i %% shuffle_every)==0){
+      shuffle(deck)
+      counter<<-0
+      if (infos=="loud"){cat(shuffle_every,"parties passed,shuffle the deck \n")}
+      }
     party(infos, method)
     count()
   }
@@ -332,11 +332,14 @@ game = function(n_episodes,infos = "quiet",method = "Q",shuffle_every=0,decks=1,
   }
 }
 
-#to see what's happening use "loud":          game(1000,"loud")
-# to simulate a drunk player (Random choice): game(1000,method="R")
+#to see what's happening use "loud":          game(10000,"loud")
+# put infos ="quiet" to make it faster
+
+# to simulate a drunk player (Random choice): game(10000,method="R")
 # To benchmark with a careful strategy:      game(10000,method="C")
-#shuffle_every=3  shuffle the deck every 3 game
+
+#shuffle_every=3:  shuffle the deck every 3 games
 #To never shuffle the deck put shuffle_every=0 (default)
 #deck=3: include 3 decks in the game (max 10 decks)
-game(n_episodes=1000,infos = "",method="Q",shuffle_every=100,decks=10,res=TRUE)
+game(n_episodes=1000,infos = "quiet",method="Q",shuffle_every=1,decks=1,res=TRUE)
 

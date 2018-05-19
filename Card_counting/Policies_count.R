@@ -17,27 +17,29 @@ gamma=1  #discount
 # reinitialize the Action-State matrix
 reset_Qmatrix = function(decks){
   
-  if (decks==1){limit=6}
+  if (decks==1){limit=10}
   if (decks==2){limit=10}
-  if (decks==3){limit=13}
-  if (decks==4 || decks==5){limit=15}
-  if (decks==6){limit=17}
-  if (decks==7){limit=19}
-  if (decks==8){limit=20}
-  if (decks==9){limit=21}
-  if (decks==10){limit=22}
+  if (decks==3){limit=20}
+  if (decks==4 || decks==5){limit=20}
+  if (decks==6){limit=22}
+  if (decks==7){limit=24}
+  if (decks==8){limit=26}
+  if (decks==9){limit=28}
+  if (decks==10){limit=30}
   
 cnt=seq(-limit,limit)
 player_score = seq(2,20)
 dealer_score = seq(1,10)
-  
+ 
+max_cnt<<-max(cnt)
 tot_count<<-length(cnt)
   
 #generate all possible state 
-grid<<-expand.grid(cnt,player_score,dealer_score)
+grid<-expand.grid(cnt,player_score,dealer_score)
 S=paste(grid[,1],grid[,2],grid[,3],sep="-")   #construct rownames of Q table
+
 # Set of actions, draw another cards or stick with the cards
-A=c("D","S")
+A<<-c("D","S")
 Q <<- matrix(0,nrow=nrow(grid),ncol=2)
 colnames(Q) <<- A
 rownames(Q) <<- S
@@ -111,12 +113,12 @@ choose_action = function(state){
 
 # Q-learning update 
 Qlearning = function(){
-  # cat("action is: ",action,"\n")
   Q[state,action] <<- Q[state,action] + alpha*(reward+gamma*max(Q[state1,])-Q[state,action])
-}
+  # cat("Q[",state,",",action,"]: ",Q[state,action] + alpha*(reward+gamma*max(Q[state1,])-Q[state,action]),"\n")
+  }
 
 
-#give the index of the Q table row corresponding to current state
+#give the index of the Q-table row corresponding to current state
 row_Qmatrix = function(){
   if( score(p_hand) == 0){
     
@@ -126,7 +128,7 @@ row_Qmatrix = function(){
   }
   else{
 
-    state <<- counter+abs(counter+1)+tot_count*(score(p_hand)-1)-tot_count + 19*tot_count * d_hand[1] - 19*tot_count
+    state <<- counter+max_cnt+1+tot_count*(score(p_hand)-1)-tot_count + 19*tot_count * d_hand[1] - 19*tot_count
   }
   return(state)
 }
@@ -154,31 +156,91 @@ row_Qmatrix = function(){
 # Learning curve, percentage of win according to number of iterations
 # average performance on 30 games by default
 
-average_win= function(sample = 30){
-  x=c(seq(20,30),seq(100,990,10))#,seq(1000,9500,500),seq(10000,15000,1000))
-  y=c()
-  perf= c()
+learning_curve= function(sample = ){
+  x=c(seq(1000,3000,1000),10000,15000,25000)#,50000,100000,500000,1000000)
+  y=data.frame()
+  perf= data.frame()
   k=1
+  s=1
+  for (d in c(1,3,5,8)){
   for (i in x){
     for(j in 1:sample){
-    game(i,res = FALSE)
-    perf[j] = n_win/n_game
+    game(n_episodes=i,shuffle_every=0,decks=d,res=FALSE)
+    perf[k,j] = n_win/n_game
     }
-    y[k] = mean(perf)
+    y[s,k] = rowMeans(perf[k,])
     k = k+1
     print(i)
-    }
+  }
+    k=1
+    s=s+1
+  }
     # plot(x,y)  #ggplot curve
-    dt = data.frame(x = x, y = y)
-    ggplot(dt, aes(x , y))+
-      geom_line(color="darkblue")+
-      geom_point(color="darkblue")+
-      ggtitle("Learning curve")
+    dt = data.frame(x = x, y = y[1,])
+    ggplot(dt, aes(x , y[1,]))+
+      ggtitle("Learning curve")+
+      xlab("Games played")+
+      ylab("Percentage of winnings")+
+      geom_line(aes(y = unlist(y[1,]),colour="1 Deck"))+
+      geom_point(aes(y = unlist(y[1,]),colour="1 Deck"))+
+      
+      geom_line(aes(y = unlist(y[2,]), colour = "2 Decks"))+
+      geom_point(aes(y = unlist(y[2,]), colour = "2 Decks"))+
+      
+      geom_line(aes(y = unlist(y[3,]),colour="5 Decks"))+
+      geom_point(aes(y = unlist(y[3,]),colour="5 Decks"))+
+      
+      geom_line(aes(y = unlist(y[4,]), colour = "8 Decks"))+
+      geom_point(aes(y = unlist(y[4,]), colour = "8 Decks"))
+    
+
+    
   }
 
 
 
+ learning_curve()
+ 
+ learning_curves= function(sample = 10){
+   x=c(seq(1000,3000,1000),10000,15000,25000,50000,100000,500000,1000000)
+   y=data.frame()
+   perf= data.frame()
+   k=1
+   s=1
+   for (S in c(1,3,5,0)){
+     for (i in x){
+       for(j in 1:sample){
+         game(n_episodes=i,shuffle_every=S,decks=1,res=FALSE)
+         perf[k,j] = n_win/n_game
+       }
+       y[s,k] = rowMeans(perf[k,])
+       k = k+1
+       print(i)
+     }
+     k=1
+     s=s+1
+   }
+  #ggplot curve
+   dt = data.frame(x = x, y = y[1,])
+   ggplot(dt, aes(x , y[1,]))+
+     ggtitle("Learning curve")+
+     xlab("Games played")+
+     ylab("Percentage of winnings")+
+     geom_line(aes(y = unlist(y[1,]),colour="Shuffle every game"))+
+     geom_point(aes(y = unlist(y[1,]),colour="Shuffle every game"))+
+     
+     geom_line(aes(y = unlist(y[2,]), colour = "Shuffle every 3 games"))+
+     geom_point(aes(y = unlist(y[2,]), colour = "Shuffle every 3 games"))+
+     
+     geom_line(aes(y = unlist(y[3,]),colour="Shuffle every 5 games"))+
+     geom_point(aes(y = unlist(y[3,]),colour="Shuffle every 5 games"))+
+     
+     geom_line(aes(y = unlist(y[4,]), colour = "No deck shuffling"))+
+     geom_point(aes(y = unlist(y[4,]), colour = "No deck shuffling"))
+ }
 
+ 
+ learning_curves()
 
 
 

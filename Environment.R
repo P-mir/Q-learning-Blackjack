@@ -195,7 +195,7 @@ game = function(n_episodes,infos = "quiet",method = "Q",res = TRUE){
 #to see what's happening use "loud":          game(1000,"loud")
 # to simulate a drunk player (Random choice): game(1000,method="R")
 # To benchmark with a careful strategy:      game(10000,method="C")
-game(n_episodes=100000,infos = "quiet",method="Q",res=TRUE)
+game(n_episodes=10000,infos = "quiet",method="Q",res=TRUE)
 
 
 

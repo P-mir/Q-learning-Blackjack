@@ -4,6 +4,7 @@ author: "Patrick Guerin"
 date: "6 avril 2018"
 output: pdf_document
 geometry: top=2cm,bottom=2cm
+fontsize: 11pt
 
 ---
 
@@ -21,22 +22,58 @@ path="C:/Users/p/Documents/GitHub/Q-learning-Blackjack/images"
 
 ```
 
-#Introduction
+#Abstract
+
+goal context
+
+exploring the performance limits of Q-learning
+
+identify is card counting can help
+
+#Context
+
+## The Blackjack game
 
 
 Gmae description
 
 one deck of 52 card
 
-# Theory
 
+
+##Card counting
+
+Ideally our player should know not only the score of the hands but also the actual cards drawn.
+
+one deck:54 cards
+approximate number of states: $54^{9}$
+
+need of strategies!
+*the exponential number of states*
+
+*Hi-Lo Strategy*
+
+
+*Number of decks*
+
+
+*Frequency of deck shuffling*
+
+
+
+
+# The Q-learning algorithm
+
+can be modeled as a markov chain
+
+TD methods can learn directly from raw experience without a model of the environment's dynamics. Like DP, TD methods update estimates based in part on other learned estimates, without waiting for a final outcome
+
+Since We believe the Q-learning approach is particularly adapted to deal with this problem
 
 
 The game of blackjack can be seen as a Markov decision process, for which each action only depends of the previous one. In order to find an optimal policy, We use the **Q-learning** method. Q-learning can be classified as an off-policy Temporal Difference algorithm.
 
 TD learning is a combination of Monte Carlo ideas and dynamic programming (DP) ideas. Like Monte Carlo methods, TD methods can learn directly from raw experience without a model of the environment. Like DP, TD methods update estimates based in part on other learned estimates, without waiting for a final outcome,contrary with Monte Carlo method which only update at the end of the epochs.
-
-##Methodology
 
 Firstly, we define the Q-table, which links each pair of action-state to its (approximated) expected value . On the basis of this the agent will choose the action with the highest expected value given the current state.
 
@@ -66,19 +103,50 @@ The Exploration factor is part of $\epsilon$-greedy strategy generally used to g
 
 not convincing.. bug? see next state after terminal state why draw has not negative values in 20
 
-#Simulation
+#Implementation
 
+The blackjack game is an application particularly interesting since we can use our own experience to model the environment to be as close as possible of the experience of a real player.
 
-## Benchmark
+We have implemented the environment as separately as possible from the algorithms to mimics the reality. The environment is implemented in file `\text{Environment.R} and the algorithms in the file \text{Policies.R}.
 
-In order to assess the performance of our agent, we simulated a random strategy and a cautious strategy as benchmarks.
+## Benchmarks
 
-In the cautious strategy, the agent choose to draw a cards until he reaches 11, then stop the drawing.
+In order to assess the performance of our agent, we have implemented a random strategy and a cautious strategy to serve as benchmarks to evaluate our performance.
+
+In the random strategy, the agent take a random action (Draw or Stop) at each step.
+
+In the cautious strategy, the agent choose to draw cards until he reaches 11 or more, then stop the drawing. With this strategy the player never have a hand exceeding 21.
 
 \begin{figure}[h]
 \includegraphics{table_C.png}
 \centering
 \end{figure}
+
+##Game Simulation
+
+functiong with all options depending on card counting or not
+
+
+##States
+
+insert table of states
+
+##Actions
+
+##Rewards
+
+
+##Hi-Lo strategy
+
+We created 2 new script to implement the card counting environment and algorithms: \text{Environment_count.R} and \text{Policies_count.R}.
+
+
+###Number of decks
+
+As the number of decks grows, the number of values that the counter can take also grows and with that the dimension of the action-state space to take into account all possible values of the counter. To keep our Q-table as small as possible, we automatically scale the Q-table in function of the number of decks chosen (up to 10 decks).
+
+### Shuffling of the deck
+
 
 
 ...
@@ -93,34 +161,27 @@ In the cautious strategy, the agent choose to draw a cards until he reaches 11, 
 
 
 
-#??? Compter les cartes
-
-Issues encountered
 
 
-*the exponential number of states*
+#Issues encountered
 
-Ideally our player should know not only the score of the hands but also the actual cards drawn.
+environment
 
-one deck:54 cards
-approximate number of states: $54^{9}$
+reduce as much as possible the number of states 
+at the beginning count bt -12 12  25*19*10 states
+now 7
 
-*Hi-Lo Strategy*
+ace
 
+how to differenciate as as 3 and as 2 2?
 
-do table with different dimensions and content
-
+on a préferer ne pas intégrer l ace pour garder une modélisation fidèle a l'environnement énoncé et se concentrer sur reinforcement and state
 
 
 
+#Conclusion
 
-***Deep Q-learning
-
-take action and state as input and output estimated Q-value or take state as input and output Q-value for each action
-
-Conlclusion
-
-e Universal Approximation Theorem shows that neural nets should be able to eventually
+The Universal Approximation Theorem shows that neural nets should be able to eventually
 adequately represent any Q function we want with a sufficiently large network, we
 8
 would like to make our larger to see if that could improve any of the issues we are seeing,
@@ -138,7 +199,7 @@ In fact, the majority of the card-counting EV comes from this large (up to 100x)
 in bet size.
 
 
-
+Blackjack in Las Vegas can use one to eight decks
 
 
 \section{References}
