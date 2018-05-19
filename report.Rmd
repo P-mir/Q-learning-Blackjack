@@ -1,5 +1,5 @@
 ---
-title: "report"
+title: "Bankrupting the casino"
 author: "Patrick Guerin"
 date: "6 avril 2018"
 output: pdf_document
@@ -24,56 +24,85 @@ path="C:/Users/p/Documents/GitHub/Q-learning-Blackjack/images"
 
 #Abstract
 
-goal context
+The blackjack is a very popular game in casino. The first goal of this project was to evaluate the performance limits of the Q-learning for this game. Secondly, we aimed to see if an agent could learn to count the cards to improve its performance, and ultimately to beat the house. In that respect we evaluated the impact of different rules on the performance of the agent to be as close as possible to the reality.
 
-exploring the performance limits of Q-learning
-
-identify is card counting can help
 
 #Context
 
 ## The Blackjack game
 
+We implemented a simplified version of the Blackjack game:
 
-Gmae description
 
-one deck of 52 card
+The objective of the player is to obtain a total of card higher than the dealer without exceeding 21.
 
+The score of a hand is computed by the face value of each card in the hand, with the Jack,Queen and King having a value of 10.
+
+At the beginning of each game the player and dealer are both dealt two cards,and at this moment the player can only see the first card of the dealer.
+
+At each turn the player has two possibilities: draw an additional card or stop and stay with its cards.
+
+If the player draw a card, it gives him the opportunity to get a higher score, at the risk of exceeding 21 and losing the game.
+
+When the player stops to draw cards, the dealer shows its second card and draw additional cards until its own score reaches 17 or more.
 
 
 ##Card counting
 
-Ideally our player should know not only the score of the hands but also the actual cards drawn.
+Card counting is a strategy that consist of maintaining a mental count of the cards already dealt - or of a score based on those cards - in order deduce information about the remaining card in the deck.
 
-one deck:54 cards
-approximate number of states: $54^{9}$
+However keeping in mind all the cards already dealt can be impossible depending of the number of deck used in the game. 
 
-need of strategies!
-*the exponential number of states*
+Hence, strategies have been developed to take this fact into account.
+
+We chose to use one of those strategies to define the action-state space. 
+Indeed ideally our agent should keep in memory all the previous dealt card, but the then the action-state space blows up:
+
+In las vegas the casinos use between 1 to 8 decks to deal the cards,
+for 4 decks used the number of possible states for the player cards only is around $54^{4}$.
+
+Consequently, we had to summarize the action-states.
 
 *Hi-Lo Strategy*
+
+We used a modified version of the Hi-Lo strategy.
+
+This strategy consists of keeping a mental counter depending of the cards dealt.
+
+the cards [1,2,3,4] are assigned a value of +1
+
+the cards [10,Jack,Queen,King] are assigned a value of -1
+
+the cards [5,6,7,8,9] are assigned a value of 0.
+
+
+This strategy allows the player to know how many cards the ratio of low cards and high cards that have been dealt: If the counter is high, a lot of low cards have been dealt and the probability of high cards is increased.
 
 
 *Number of decks*
 
+The number of decks is very important in card counting, the most deck are used by the dealer, the less informative it will be to count the cards. Casinos are well aware of that and generally use multiple decks, to stay as close as possible from the reality, we will examine the performance of the agent depending of the number of decks used.
 
 *Frequency of deck shuffling*
 
-
+Shuffling the deck regularly is another rule used by the casinos to severely damage the effectiveness of card counting. We will examine its impact depending of the frequency of deck shuffling.
 
 
 # The Q-learning algorithm
 
-can be modeled as a markov chain
+## Choice of the method
 
-TD methods can learn directly from raw experience without a model of the environment's dynamics. Like DP, TD methods update estimates based in part on other learned estimates, without waiting for a final outcome
+The game of BlackJack can be easily modeled as a markov chain and the Q-learning algorithm seemed to us to be particularly adapted derive the optimal policy.
 
-Since We believe the Q-learning approach is particularly adapted to deal with this problem
+The Q-learning is part of the temporal-differences methods and has several advantages deriving from it: 
 
+1- Contrary to dynaming programming, it allows the agent to learn directly from raw experience without a model of the environment's dynamics. 
 
-The game of blackjack can be seen as a Markov decision process, for which each action only depends of the previous one. In order to find an optimal policy, We use the **Q-learning** method. Q-learning can be classified as an off-policy Temporal Difference algorithm.
+2- Contrary to Monte-Carlo methods, it allow the agent to update its estimations, without waiting for the final outcome.This means that our agent will be able to learn during a Blackjack game and not only at the end of it.
 
-TD learning is a combination of Monte Carlo ideas and dynamic programming (DP) ideas. Like Monte Carlo methods, TD methods can learn directly from raw experience without a model of the environment. Like DP, TD methods update estimates based in part on other learned estimates, without waiting for a final outcome,contrary with Monte Carlo method which only update at the end of the epochs.
+Moreover, because the mistakes of the agent during the training phase can be done at no cost and that the fact the Q-learning tend to be faster, we prefered the Q-learning over the SARSA algorithm.
+
+## Description of the method
 
 Firstly, we define the Q-table, which links each pair of action-state to its (approximated) expected value . On the basis of this the agent will choose the action with the highest expected value given the current state.
 
@@ -83,31 +112,39 @@ The update is made according to the following formula:
 
 $Q(s_{t},a_{t}) \leftarrow   \underbrace{Q(s_{t},a_{t})}_{\rm old~value} + \underbrace{\alpha}_{\rm learning~rate} \cdot  \overbrace{\bigg( \underbrace{r_{t}}_{\rm reward} + \underbrace{\gamma}_{\rm discount~factor} \cdot \Big[\underbrace{Q(s_{t},a_{t})}_{\rm old~value}- \underbrace{\max_{a}Q(s_{t+1}, a)\Big]}_{\rm estimate~of~optimal~future~value} \bigg) }^{\rm learned~value}$
 
-
+You can find below a description of the various parameters and of the choices we made about them.
 
 ***Learning rate($\alpha$)***
 
 The learning rate or step size determines to what extent newly acquired information overrides old information
 
-Various condition have been defined in the literature to ensure a convergence[-@convergence], in practice, a learning rate of 0.1 is often used, this is what we use.
+Various condition have been defined in the literature to ensure a convergence[-@convergence], in practice, a learning rate of 0.1 is often used, this is what we used after several trials.
+
 
 ***Discount factor ($\gamma$)***
 
 
-It is the weight given to the future rewards,we set $\gamma$ to 1 since there is no interest to not take into account all futures states in the case of the blackjack game. Hence we set $\gamma=1$ (which gave us the best results).
+It is the weight given to the future rewards,we set $\gamma$ to 1 since there is no interest for the agent to not take into account all futures states in the case of the blackjack game. Hence we set $\gamma=1$ (which gave us the best results).
 
 
 ***Exploration factor ($\epsilon$)***
 
-The Exploration factor is part of $\epsilon$-greedy strategy generally used to garantee that the agent explore all the state space a convenient number of times. The $\epsilon$-greedy strategy did not improve the performance of the agent, and we decided to set $\epsilon=0$. This surprising result can be explained by taking into account that $\gamma=1$ imply that the estimated value of each action-state is greatly dependant of the next action-states values. In other words even if our agent did not explore all the state space, the values of each action-state were correctly estimated thanks to the next action-states
+The Exploration factor is part of $\epsilon$-greedy strategy generally used to garantee that the agent explore all the state space a convenient number of times. 
 
-not convincing.. bug? see next state after terminal state why draw has not negative values in 20
+To ensure that our agent become uncertain as its learning progress we set 
+
+$\epsilon=1/t$ where $t$ is the number of episodes.
+
+
 
 #Implementation
 
 The blackjack game is an application particularly interesting since we can use our own experience to model the environment to be as close as possible of the experience of a real player.
 
-We have implemented the environment as separately as possible from the algorithms to mimics the reality. The environment is implemented in file `\text{Environment.R} and the algorithms in the file \text{Policies.R}.
+We have implemented the environment separately from the algorithms to mimics the reality. The environment is implemented in`\text{Environment.R} file and the algorithms in the \text{Policies.R} file.
+
+We created 2 new scripts to implement the card counting environment and algorithms: \text{Environment_count.R} and \text{Policies_count.R}.
+
 
 ## Benchmarks
 
@@ -115,45 +152,102 @@ In order to assess the performance of our agent, we have implemented a random st
 
 In the random strategy, the agent take a random action (Draw or Stop) at each step.
 
-In the cautious strategy, the agent choose to draw cards until he reaches 11 or more, then stop the drawing. With this strategy the player never have a hand exceeding 21.
+In the cautious strategy, the agent choose to draw cards until he reaches 11 or more, then stop the drawing. With this strategy the player never have a hand exceeding 21. The strategy is illustrated below.
 
 \begin{figure}[h]
 \includegraphics{table_C.png}
 \centering
 \end{figure}
 
-##Game Simulation
+## Game Simulation
 
-functiong with all options depending on card counting or not
+We used three mains functions to construct the environment:
 
+  1- The function \text{step} which handle one "turn" of the game, during one turn the agent choose one action between draw and stop. If the game end during a step, the reward is update: -1 if the agent lost, +1 if he lost and 0 for a draw.
+  If we count the card it is also this function that increment the counter of the Hi-Lo strategy. The counter is incremented when the player become aware of the cards, as it would be in real life. 
+
+  2- The function \text{party} which handle an entire party. Essentially it initialize of the players and loops the function \text{step}, calling the function \text{Qlearning} after each step.
+  
+  3-  The function \text{game} which handle an entire simulation and encompasses party. This function allows to pass various parameters:
+    -the number of game desired in the simulation.
+    -the information displayed: if infos=TRUE one can see the parties as they are played.
+    -the strategy to apply: Random,Cautious or Q-learning.
+    
+    -If we count the cards it also allows to specify:
+      - The number of decks to use (the Q-table is automatically                      scaled depending of this parameter)
+      - The frequency of deck shuffling
+      
+      
+We used three mains functions for the algorithm:
+
+  1- \text{rowQmatrix} which return the state in the Q-table given the cards of the player (and given the counter if we count the card).
+  2- \text{Qlearning} which update the Q-table using the Q-learning update.
+  3- \text{choose_action} which return the chosen action using an          epsilon-greedy strategy.
+  
 
 ##States
 
-insert table of states
+In the simulation without card counting the features of the space are represented as follow:
 
-##Actions
+mat=matrix(nrow=3,ncol=2)
+mat[1,1]="Content"
+mat[1,1]="Dimension"
+mat[2,1]='Player score'
+mat[3,1]='Dealer score'
+mat[2,2]='2-20'
+mat[3,1]='1-10'
 
-##Rewards
+pander(mat)
+
+In the case with card counting we have:
 
 
-##Hi-Lo strategy
+mat=matrix(nrow=3,ncol=2)
+mat[1,1]="Content"
+mat[1,1]="Possibles values"
+mat[2,1]='Player score'
+mat[3,1]='Dealer score'
+mat[3,1]='Count'
+mat[2,2]='2-20'
+mat[3,2]='1-10'
+mat[4,2]='Depend on deck size'
 
-We created 2 new script to implement the card counting environment and algorithms: \text{Environment_count.R} and \text{Policies_count.R}.
-
+pander(mat)
 
 ###Number of decks
 
 As the number of decks grows, the number of values that the counter can take also grows and with that the dimension of the action-state space to take into account all possible values of the counter. To keep our Q-table as small as possible, we automatically scale the Q-table in function of the number of decks chosen (up to 10 decks).
 
-### Shuffling of the deck
+we defined empirically the dimension of Count by observing the maximum count obtained after playing a consequent number of games, for a given number of decks. For example if we play with one deck, we will almost never have a count which is not between -10 and 10.
 
 
 
-...
+# Results
+
+## Simple Q-learning BlackJack
+
+The policy obtained with Q-learning performed significatively better than a drunk player (random strategy) but couldn't equal the cautious strategy
+
+label=c("random", "Q-learning","Cautious")
+res=c(0.3,0.41,0.43)
+
+pander(res,label)
 
 
 
-## Statistics
+In this case the size of the state-space were relatively low
+
+insert table of policy
+
+
+variance
+
+learning curve
+
+
+
+## Counting the cards with Q-learning
+
 
 
 
@@ -197,6 +291,8 @@ Most cardcounting
 strategies provide recommendations about when to up the bet and when to lower it.
 In fact, the majority of the card-counting EV comes from this large (up to 100x) modulation
 in bet size.
+
+parallelizing
 
 
 Blackjack in Las Vegas can use one to eight decks

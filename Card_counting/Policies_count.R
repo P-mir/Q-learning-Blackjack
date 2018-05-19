@@ -156,13 +156,13 @@ row_Qmatrix = function(){
 # Learning curve, percentage of win according to number of iterations
 # average performance on 30 games by default
 
-learning_curve= function(sample = ){
-  x=c(seq(1000,3000,1000),10000,15000,25000)#,50000,100000,500000,1000000)
+learning_curve= function(sample = 20){
+  x=c(seq(1000,3000,1000),10000,15000,25000,50000,100000,250000,500000)
   y=data.frame()
   perf= data.frame()
   k=1
   s=1
-  for (d in c(1,3,5,8)){
+  for (d in c(1,3,8)){
   for (i in x){
     for(j in 1:sample){
     game(n_episodes=i,shuffle_every=0,decks=d,res=FALSE)
@@ -184,14 +184,11 @@ learning_curve= function(sample = ){
       geom_line(aes(y = unlist(y[1,]),colour="1 Deck"))+
       geom_point(aes(y = unlist(y[1,]),colour="1 Deck"))+
       
-      geom_line(aes(y = unlist(y[2,]), colour = "2 Decks"))+
-      geom_point(aes(y = unlist(y[2,]), colour = "2 Decks"))+
-      
-      geom_line(aes(y = unlist(y[3,]),colour="5 Decks"))+
-      geom_point(aes(y = unlist(y[3,]),colour="5 Decks"))+
-      
-      geom_line(aes(y = unlist(y[4,]), colour = "8 Decks"))+
-      geom_point(aes(y = unlist(y[4,]), colour = "8 Decks"))
+      geom_line(aes(y = unlist(y[2,]), colour = "3 Decks"))+
+      geom_point(aes(y = unlist(y[2,]), colour = "3 Decks"))+
+
+      geom_line(aes(y = unlist(y[3,]), colour = "8 Decks"))+
+      geom_point(aes(y = unlist(y[3,]), colour = "8 Decks"))
     
 
     
@@ -201,8 +198,8 @@ learning_curve= function(sample = ){
 
  learning_curve()
  
- learning_curves= function(sample = 10){
-   x=c(seq(1000,3000,1000),10000,15000,25000,50000,100000,500000,1000000)
+ learning_curves= function(sample = 15){
+   x=c(seq(1000,3000,1000),10000,15000,25000,50000,100000,500000,1000000,5000000)
    y=data.frame()
    perf= data.frame()
    k=1

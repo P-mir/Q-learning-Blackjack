@@ -8,6 +8,32 @@ end = TRUE
 #mélanger tous les x game ok
 # counter at each moment the player discover a new card
 
+#Count number of win,loss,draw and games
+count = function(){
+  if (reward == 1){
+    n_win <<- n_win+1
+  } else if (reward == -1){
+    n_loss <<- n_loss+1
+  } else{
+    n_draw <<- n_draw+1
+  }
+  n_game <<- n_game+1
+}
+
+# Initialize player and dealer hands
+
+reset = function(){
+  p_hand<<-draw_hand()
+  d_hand<<-draw_hand()
+}
+
+reset_stat = function(){
+  n_game <<- 0
+  n_win <<- 0
+  n_loss <<- 0
+  n_draw <<- 0
+}
+
 counter=0
 Count = function(infos="quiet"){
   
@@ -259,32 +285,8 @@ step = function(infos = "quiet",method = "Q"){
     } 
 }
   
-#Count number of win,loss,draw and games
-count = function(){
-  if (reward == 1){
-  n_win <<- n_win+1
-  } else if (reward == -1){
-    n_loss <<- n_loss+1
-  } else{
-    n_draw <<- n_draw+1
-  }
-  n_game <<- n_game+1
-  }
 
-# Initialize player and dealer hands
-
-reset = function(){
-  p_hand<<-draw_hand()
-  d_hand<<-draw_hand()
-}
-
-reset_stat = function(){
-  n_game <<- 0
-  n_win <<- 0
-  n_loss <<- 0
-  n_draw <<- 0
-}
-maxcount=0
+# maxcount=0
 # --------GAME SIMULATION----------
 
 
@@ -297,7 +299,7 @@ party = function(infos = "quiet",method = "Q"){
   end <<- FALSE
   while(end == FALSE){ 
   step(infos, method)
-  if(maxcount<counter){maxcount<<-counter}
+  # if(maxcount<counter){maxcount<<-counter}
   Qlearning()
   }
 }
