@@ -343,5 +343,5 @@ game = function(n_episodes,infos = "quiet",method = "Q",shuffle_every=0,decks=1,
 #shuffle_every=3:  shuffle the deck every 3 games
 #To never shuffle the deck put shuffle_every=0 (default)
 #deck=3: include 3 decks in the game (max 10 decks)
-game(n_episodes=1000,infos = "quiet",method="Q",shuffle_every=1,decks=1,res=TRUE)
+game(n_episodes=10000000,infos = "quiet",method="Q",shuffle_every=0,decks=1,res=TRUE)
 

@@ -134,21 +134,23 @@ row_Qmatrix = function(){
 }
 
 # Variance depending of the number of iteration
-# var_plot= function(){
-#   x=c(seq(1,99),seq(100,990,10),seq(1000,9500,500),seq(10000,12000,2000))
-#   y=c()
-#   k=1
-#   for (i in x){
-#     game(i,res = FALSE)
-#     y[k]=n_win/n_game
-#     k = k+1
-#   }
-#   dt = data.frame(x = x, y = y)
-#   ggplot(dt, aes(x , y))+
-#     geom_point(color="blue")+
-#     ggtitle("")
-# }
-# var_plot()
+var_plot= function(){
+  x=c(seq(10000,12000,1000),seq(10000,100000,5000),seq(100000,1000000,100000),seq(1000000,10000000,1000000))
+  y=c()
+  k=1
+  for (i in x){
+    game(n_episodes=i,shuffle_every=0,decks=1,res=FALSE)
+    y[k]=n_win/n_game
+    k = k+1
+  }
+  dt = data.frame(x = x, y = y)
+  ggplot(dt, aes(x , y))+
+    geom_point(color="blue")+
+    ggtitle("")+
+    xlab("Games played")+
+    ylab("Percentage of winnings")
+}
+var_plot()
 
 
 
@@ -223,17 +225,17 @@ learning_curve= function(sample = 20){
      ggtitle("Learning curve")+
      xlab("Games played")+
      ylab("Percentage of winnings")+
-     geom_line(aes(y = unlist(y[1,]),colour="Shuffle every game"))+
-     geom_point(aes(y = unlist(y[1,]),colour="Shuffle every game"))+
+     geom_line(aes(y = unlist(y[1,]),"Shuffle every game"))+
+     geom_point(aes(y = unlist(y[1,]),"Shuffle every game"))+
      
-     geom_line(aes(y = unlist(y[2,]), colour = "Shuffle every 3 games"))+
-     geom_point(aes(y = unlist(y[2,]), colour = "Shuffle every 3 games"))+
+     geom_line(aes(y = unlist(y[2,]), "Shuffle every 3 games"))+
+     geom_point(aes(y = unlist(y[2,]), "Shuffle every 3 games"))+
      
-     geom_line(aes(y = unlist(y[3,]),colour="Shuffle every 5 games"))+
-     geom_point(aes(y = unlist(y[3,]),colour="Shuffle every 5 games"))+
+     geom_line(aes(y = unlist(y[3,]),"Shuffle every 5 games"))+
+     geom_point(aes(y = unlist(y[3,]),"Shuffle every 5 games"))+
      
-     geom_line(aes(y = unlist(y[4,]), colour = "No deck shuffling"))+
-     geom_point(aes(y = unlist(y[4,]), colour = "No deck shuffling"))
+     geom_line(aes(y = unlist(y[4,]), "No deck shuffling"))+
+     geom_point(aes(y = unlist(y[4,]),"No deck shuffling"))
  }
 
  
