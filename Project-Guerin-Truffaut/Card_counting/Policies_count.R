@@ -17,8 +17,8 @@ gamma=1  #discount
 # reinitialize the Action-State matrix
 reset_Qmatrix = function(decks){
   
-  if (decks==1){limit=12}
-  if (decks==2){limit=13}
+  if (decks==1){limit=10}
+  if (decks==2){limit=10}
   if (decks==3){limit=20}
   if (decks==4 || decks==5){limit=20}
   if (decks==6){limit=22}
@@ -200,12 +200,12 @@ learning_curve= function(sample = 20){
  # learning_curve()
  
  learning_curves= function(sample = 15){
-   x=c(seq(1000,3000,1000),10000,15000,25000,50000,100000,500000)
+   x=c(seq(1000,3000,1000),10000,15000,25000,50000,100000,500000,1000000,5000000)
    y=data.frame()
    perf= data.frame()
    k=1
    s=1
-   for (S in c(1,5,0)){
+   for (S in c(1,3,5,0)){
      for (i in x){
        for(j in 1:sample){
          game(n_episodes=i,shuffle_every=S,decks=1,res=FALSE)
@@ -227,14 +227,16 @@ learning_curve= function(sample = 20){
      geom_line(aes(y = unlist(y[1,]),"Shuffle every game"))+
      geom_point(aes(y = unlist(y[1,]),"Shuffle every game"))+
      
-     geom_line(aes(y = unlist(y[2,]),"Shuffle every 5 games"))+
+     geom_line(aes(y = unlist(y[2,]), "Shuffle every 3 games"))+
+     geom_point(aes(y = unlist(y[2,]), "Shuffle every 3 games"))+
+     
+     geom_line(aes(y = unlist(y[3,]),"Shuffle every 5 games"))+
      geom_point(aes(y = unlist(y[3,]),"Shuffle every 5 games"))+
      
-     geom_line(aes(y = unlist(y[3,]), "No deck shuffling"))+
+     geom_line(aes(y = unlist(y[4,]), "No deck shuffling"))+
      geom_point(aes(y = unlist(y[4,]),"No deck shuffling"))
  }
 
- learning_curves()
  
 
 

@@ -19,7 +19,7 @@ library(knitr)
 
 ```
 <!-- \graphicspath{ {path/} } -->
-\graphicspath{{"C:/Users/p/Documents/GitHub/Q-learning-Blackjack/images/"}}
+\graphicspath{{"C:/Users/p/Documents/GitHub/Q-learning-Blackjack/Project-Guerin-Truffaut/images/"}}
 
 
 ```{r, echo=FALSE}
@@ -154,6 +154,8 @@ mat[3,2]='1-10'
 pander(mat)
 ```
 
+\newpage 
+
 In the case with card counting we have:
 
 ```{r, echo=FALSE}
@@ -275,6 +277,7 @@ Unfortunately, we were not able to do better than the cautious strategy with Q-l
 
 ## Counting the cards with Q-learning
 
+Counting the cards significatively improved the policy of the agent, with an average performance of 53% of games won.
 
 Below,we constructed a learning curve  for a game with 1,3 and 8 decks in order to have an idea of both the convergence rate and the influence of the number of decks on the performance of the agent. Each point represent an average on a sample of 20 observations.
 
@@ -295,16 +298,18 @@ We also searched to know how variable was the performance of the agent. As you c
 \centering
 \end{figure}
 
-This was not expected at the beginning of our project. An explication to this phenomen lies in the fact that even with only one deck, the number of possible order of a 52 cards deck is still very important, therefore for each order of the deck, the cards counting strategy will be more or less efficient depending on how the high card are shuffled with the low cards. However, even if the variance is fairly high we can always estimate the esperance of the winnings by taking the average performance, as we have done to estimate the impact of the number of decks.
-
-<!-- After that, we studied the influence of the shuffling frequency on the perfomance of our algoritm. -->
+This was not expected at the beginning of our project. An explication to this phenomen may lies in the fact that for each possible order of the deck, the cards counting strategy will be more or less efficient depending on how the high card are shuffled with the low cards. Even with only one deck, the number of possible orders is still very important (52 factorial). Therefore it is impossible to simulate enough blackjack parties to effectively reduce this variance of performance. However, even if the variance is fairly high we can always estimate the esperance of the winnings by taking the average performance, as we have done to estimate the impact of the number of decks.
 
 
-<!-- \begin{figure}[h] -->
-<!-- \caption{Variance of the performance} -->
-<!-- \includegraphics{varplot_count.PNG} -->
-<!-- \centering -->
-<!-- \end{figure} -->
+After that, we studied the influence of the shuffling frequency on the perfomance of our algoritm.
+
+\begin{figure}[h]
+\caption{Influence of the deck shuffling}
+\includegraphics{shuffle.PNG}
+\centering
+\end{figure}
+
+We observed that without surprise if the deck is not shuffled, the agent have a better performance. More surprisingly, it seems preferable for the agent to shuffle the deck at every game rather than every 5 game. This interesting fact can be explained by the fact that if the shuffle is done every 5 game, it can lead the agent to learn patterns that will not be useful after the shuffle.
 
 # Further works
 

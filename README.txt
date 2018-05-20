@@ -1,0 +1,1 @@
+Run the script Environment.R to launch the game
